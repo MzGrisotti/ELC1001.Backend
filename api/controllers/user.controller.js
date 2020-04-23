@@ -15,12 +15,12 @@ exports.create = async (req, res) => {
         // Pesquise qual deve ser o código de retorno HTTP quando um novo recurso foi criado no banco. 201
 
         res.status(201).send({
-          user: dados,
-          token: token
+            user: dados,
+            token: token
         })
 
     }
-    catch(err) {
+    catch (err) {
         console.error(err, err.message, err.stack);
 
         res.status(500).send({
@@ -35,9 +35,28 @@ exports.login = async (req, res) => {
         // confirmar que as credenciais digitadas estão corretas e gerar um novo token
         // JWT para o usuário.
 
+        var user = new User();
+        if (req.body.hasOwnProperty("username")) {
+            user = await User.findByUsername(req.body.username, req.body.password);
+        }
+
+        else if (req.body.hasOwnProperty("email")) {
+            user = await User.findByEmail(req.body.email, req.body.password);
+        }
+        
         // A resposta deve estar no formato { user: [dados do usuário], token: [token gerado]}
         // Pesquise qual deve ser o código de retorno HTTP quando a requisição foi bem sucedida. 202
+        
+        const token = await user.generateAuthToken();
+        const dados = user.toJSON();
+
+        res.status(202).send({
+            user: dados,
+            token: token
+        })
+
     } catch (err) {
+        console.log("catch");
         console.error(err, err.message, err.stack);
 
         res.status(500).send({
@@ -54,7 +73,7 @@ exports.getInfo = (req, res) => {
         // (exceto informações como senha e tokens).
         // Pesquise qual deve ser o código de retorno HTTP quando a requisição foi bem sucedida. 202
 
-    } catch(err) {
+    } catch (err) {
         console.error(err, err.message, err.stack);
 
         res.status(500).send({
