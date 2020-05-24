@@ -17,7 +17,7 @@ exports.create = async (req, res) => {
         res.status(201).send({
             user: dados,
             token: token
-        })
+        });
 
     }
     catch (err) {
@@ -43,17 +43,17 @@ exports.login = async (req, res) => {
         else if (req.body.hasOwnProperty("email")) {
             user = await User.findByEmail(req.body.email, req.body.password);
         }
-        
+
         // A resposta deve estar no formato { user: [dados do usuário], token: [token gerado]}
         // Pesquise qual deve ser o código de retorno HTTP quando a requisição foi bem sucedida. 202
-        
+
         const token = await user.generateAuthToken();
         const dados = user.toJSON();
 
         res.status(202).send({
             user: dados,
             token: token
-        })
+        });
 
     } catch (err) {
         console.log("catch");
@@ -69,9 +69,17 @@ exports.getInfo = (req, res) => {
     try {
         // Essa rota deve retornar as informações do usuário que está fazendo a requisição.
 
+        var user = req.user;
+        delete user.password;
+        delete user.tokens;
+
         // Você pode escolher como retornar os dados, contanto que todas as informações do usuário
         // (exceto informações como senha e tokens).
         // Pesquise qual deve ser o código de retorno HTTP quando a requisição foi bem sucedida. 202
+
+        res.status(202).send({
+          user: user,
+        });
 
     } catch (err) {
         console.error(err, err.message, err.stack);
