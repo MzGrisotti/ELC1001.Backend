@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
         const token = await user.generateAuthToken();
         const dados = user.toJSON();
 
-        res.status(202).send({
+        res.status(200).send({
             user: dados,
             token: token
         });
@@ -77,7 +77,7 @@ exports.getInfo = (req, res) => {
         // (exceto informações como senha e tokens).
         // Pesquise qual deve ser o código de retorno HTTP quando a requisição foi bem sucedida. 202
 
-        res.status(202).send({
+        res.status(200).send({
           user: user,
         });
 
